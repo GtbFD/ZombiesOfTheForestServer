@@ -7,7 +7,7 @@ class Server
     {
         AddressFamily IPAdressFamily = getIP().AddressFamily;
         IPEndPoint IPEndPoint = prepareEndPoint();
-        int MAX_CONNECTIONS = 10;
+        int MAX_CONNECTIONS = 1;
 
         Socket listenerSocket = new Socket(IPAdressFamily, SocketType.Stream, ProtocolType.Tcp);
         listenerSocket.Bind(IPEndPoint);

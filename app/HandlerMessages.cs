@@ -11,19 +11,22 @@ class HandlerMessages
         while(true)
         {
             int bytesReciev = connection.Receive(bytes);
-            data += Encoding.ASCII.GetString(bytes, 0, bytesReciev);
+            
+            if(bytesReciev != 0){
+                data += Encoding.ASCII.GetString(bytes, 0, bytesReciev);
+                Console.WriteLine("Text received : {0}", data);
 
-            if(data.IndexOf("<EOF>") > -1)
-            {
-                break;
+                byte[] msg = Encoding.ASCII.GetBytes(data);
+                connection.Send(msg);
             }
+
+            /*if(data.IndexOf("<EOF>") > -1)
+            {
+                connection.Shutdown(SocketShutdown.Both);
+                connection.Close();
+                break;
+            }*/
         }
-        Console.WriteLine("Text received : {0}", data);
-
-        byte[] msg = Encoding.ASCII.GetBytes(data);
-        connection.Send(msg);
-
-        connection.Shutdown(SocketShutdown.Both);
-        connection.Close();
+        
     }
 }
