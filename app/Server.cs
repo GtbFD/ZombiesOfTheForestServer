@@ -1,48 +1,92 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 class Server 
 {
-    public void config()
+    private string HOST;
+    private int PORT;
+    private IPAddress IP_ADDRESS;
+
+    private int MAX_CONNECTIONS = 2;
+
+    public Server()
     {
-        AddressFamily IPAdressFamily = getIP().AddressFamily;
-        IPEndPoint IPEndPoint = prepareEndPoint();
-        int MAX_CONNECTIONS = 1;
-
-        Socket listenerSocket = new Socket(IPAdressFamily, SocketType.Stream, ProtocolType.Tcp);
-        listenerSocket.Bind(IPEndPoint);
-
-        listenerSocket.Listen(MAX_CONNECTIONS);
-        Console.WriteLine("Server configured");
-
-        Console.WriteLine("Waiting for connections");
-        listener(listenerSocket);
+        this.HOST = "localhost";
+        this.PORT = 11000;
     }
 
-    private IPAddress getIP()
+    public void Start()
     {
-        string HOST = "localhost";
-        IPHostEntry DNS = Dns.GetHostEntry(HOST);
+        Socket SocketConnection = Config();
+
+        WellcomeMessage();
+
+        Listener(SocketConnection);
+    }
+
+    public Socket Config()
+    {
+        AddressFamily IPAdressFamily = GetAdressFamily();
+        IPEndPoint IpEndPoint = prepareEndPoint();
+
+        Socket SocketConnection
+            = new Socket(IPAdressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+        SocketConnection.Bind(IpEndPoint);
+        SocketConnection.Listen(MAX_CONNECTIONS);
+
+        return SocketConnection;
+    }
+
+    private AddressFamily GetAdressFamily()
+    {
+        return GetIpAddress().AddressFamily;
+    }
+
+    private IPEndPoint prepareEndPoint()
+    {
+        IP_ADDRESS = GetIpAddress();
+        IPEndPoint EndPoint = new IPEndPoint(IP_ADDRESS, PORT);
+
+        return EndPoint;
+    }
+
+    private IPAddress GetIpAddress()
+    {
+
+        IPHostEntry DNS = Dns.GetHostEntry(this.HOST);
         IPAddress ip = DNS.AddressList[0];
 
         return ip;
     }
 
-    private IPEndPoint prepareEndPoint()
+    public void WellcomeMessage()
     {
-        int PORT = 11000;
-        IPAddress HOST = getIP();
-        IPEndPoint endPoint = new IPEndPoint(HOST, PORT);
-
-        return endPoint;
+        Console.WriteLine("[STATUS]: Working\n");
     }
 
-    public void listener(Socket listener)
+    public void Listener(Socket listenerSocket)
     {
-        Socket handler = listener.Accept();
-        HandlerMessages handlerMessages = new HandlerMessages();
-        handlerMessages.listening(handler);
+        while (RunForever())
+        {
+            Socket handler = listenerSocket.Accept();
+
+            InvokeHandlerMessagesWithThread(handler);
+        }
     }
 
+    public bool RunForever()
+    {
+        return true;
+    }
 
+    public void InvokeHandlerMessagesWithThread(Socket SocketConnection)
+    {
+        HandlerPackets PacketsManager = new HandlerPackets(SocketConnection);
+
+        Thread HandlerPacketsThread = new Thread(PacketsManager.Listening);
+        HandlerPacketsThread.Start();
+    }
 }
