@@ -10,9 +10,11 @@ class Server
     private IPAddress IP_ADDRESS;
 
     private int MAX_CONNECTIONS = 2;
+    public static List<Socket> ConnectedPlayers;
 
     public Server()
     {
+        ConnectedPlayers = new List<Socket>();
         this.HOST = "localhost";
         this.PORT = 11000;
     }
@@ -72,6 +74,7 @@ class Server
         while (RunForever())
         {
             Socket handler = listenerSocket.Accept();
+            ConnectedPlayers.Add(listenerSocket);
 
             InvokeHandlerMessagesWithThread(handler);
         }
@@ -84,7 +87,7 @@ class Server
 
     public void InvokeHandlerMessagesWithThread(Socket SocketConnection)
     {
-        HandlerPackets PacketsManager = new HandlerPackets(SocketConnection);
+        HandlerPackets PacketsManager = new HandlerPackets(SocketConnection, ConnectedPlayers);
 
         Thread HandlerPacketsThread = new Thread(PacketsManager.Listening);
         HandlerPacketsThread.Start();
