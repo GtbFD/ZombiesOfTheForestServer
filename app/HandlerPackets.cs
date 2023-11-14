@@ -8,16 +8,19 @@ class HandlerPackets
     private static int connections = 0;
     private String data;
     private byte[] BUFFER_LENGTH = new byte[1024];
-    private Socket connection;
+    private Socket PlayerConnection;
 
-    public HandlerPackets(Socket connection)
+    private List<Socket> ConnectedPlayers;
+
+    public HandlerPackets(Socket Connection, List<Socket> ConnectedPlayers)
     {
-        this.connection = connection;
+        this.ConnectedPlayers = ConnectedPlayers;
+        this.PlayerConnection = Connection;
     }
 
     public void Listening()
     {
-        //connections++;
+        Console.WriteLine("Connected players > {0}", ConnectedPlayers.Count);
         while(RunForever())
         {
             ReadMessagesFromClient();
@@ -32,7 +35,7 @@ class HandlerPackets
 
     private void ReadMessagesFromClient()
     {
-        int BytesReceived = connection.Receive(BUFFER_LENGTH);
+        int BytesReceived = PlayerConnection.Receive(BUFFER_LENGTH);
 
         if (HasMessageFromClient(BytesReceived))
         {
@@ -63,14 +66,14 @@ class HandlerPackets
         //Player PlayerObject = JsonConvert.DeserializeObject<Player>(PacketData);
 
         byte[] Packet = Encoding.ASCII.GetBytes(PacketData);
-        connection.Send(Packet);
+        PlayerConnection.Send(Packet);
     }
 
     private void Shutdown(String command)
     {
         if (command.IndexOf("<EOF>") > -1)
         {
-            connection.Close();
+            PlayerConnection.Close();
         }
     }
 }
