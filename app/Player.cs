@@ -1,4 +1,7 @@
+﻿using System;
+
 public class Player
 {
-    public string name;
+    public long Id;
+    public string Name;
 }

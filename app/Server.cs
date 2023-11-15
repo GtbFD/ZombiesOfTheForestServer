@@ -9,7 +9,7 @@ class Server
     private int PORT;
     private IPAddress IP_ADDRESS;
 
-    private int MAX_CONNECTIONS = 2;
+    private int MAX_CONNECTIONS = 100;
     public static List<Socket> ConnectedPlayers;
 
     public Server()
@@ -74,7 +74,8 @@ class Server
         while (RunForever())
         {
             Socket handler = listenerSocket.Accept();
-            ConnectedPlayers.Add(listenerSocket);
+
+            ConnectedPlayers.Add(handler);
 
             InvokeHandlerMessagesWithThread(handler);
         }
