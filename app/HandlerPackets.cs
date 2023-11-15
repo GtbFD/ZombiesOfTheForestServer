@@ -53,6 +53,7 @@ class HandlerPackets
             }
             else
             {
+                Console.WriteLine("<-" + PlayerConnection.RemoteEndPoint.ToString());
                 byte[] c = Encoding.ASCII.GetBytes("Hello World");
                 Console.WriteLine("-> New message to player");
                 PlayerConnection.Send(c);
@@ -93,15 +94,22 @@ class HandlerPackets
     {
         foreach(Socket player in ConnectedPlayers.ToList())
         {
-            FindAndRemovePlayer(player);
+            //Console.WriteLine(player.Connection);
+            FindAndRemovePlayer(PlayerConnection);
         }
     }
 
-    private void FindAndRemovePlayer(Socket player)
+    private void FindAndRemovePlayer(Socket PlayerConnection)
     {
-        if (ConnectedPlayers.Contains(player))
+        foreach(Socket Connection in ConnectedPlayers.ToList())
         {
-            ConnectedPlayers.Remove(player);
+            if (PlayerConnection.RemoteEndPoint.ToString()
+                .Equals(Connection.RemoteEndPoint.ToString()))
+            {
+
+                ConnectedPlayers.Remove(Connection);
+                break;
+            }
         }
     }
 }
