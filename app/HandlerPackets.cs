@@ -50,13 +50,17 @@ class HandlerPackets
                 PlayerConnection.Send(CommandToLeave);
 
                 DisconnectPlayer(PlayerConnection);
+
+                byte[] c = Encoding.ASCII.GetBytes("0000" + ConnectedPlayers.Count);
+                SendToAllPlayers(c);
             }
             else
             {
                 Console.WriteLine("<-" + PlayerConnection.RemoteEndPoint.ToString());
-                byte[] c = Encoding.ASCII.GetBytes("Hello World");
+
                 Console.WriteLine("-> New message to player");
-                PlayerConnection.Send(c);
+                byte[] c = Encoding.ASCII.GetBytes("0000" + ConnectedPlayers.Count);
+                SendToAllPlayers(c);
             }
 
             
@@ -110,6 +114,14 @@ class HandlerPackets
                 ConnectedPlayers.Remove(Connection);
                 break;
             }
+        }
+    }
+
+    private void SendToAllPlayers(byte[] Data)
+    {
+        foreach (Socket Connection in ConnectedPlayers.ToList())
+        {
+            Connection.Send(Data);
         }
     }
 }
