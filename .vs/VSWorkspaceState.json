@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\app"
+    "\\app",
+    "\\app\\interfaces",
+    "\\app\\packets"
   ],
-  "SelectedNode": "\\app\\HandlerPackets.cs",
+  "SelectedNode": "\\app\\packets",
   "PreviewInSolutionExplorer": false
 }

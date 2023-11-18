@@ -1,96 +1,69 @@
-﻿using System.Net;
+using System.Diagnostics;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text;
+using Newtonsoft.Json;
 
-class Server 
+class Server
 {
-    private string HOST;
-    private int PORT;
-    private IPAddress IP_ADDRESS;
+    private static int connections = 0;
+    private string data;
+    private byte[] bufferLength;
+    private Socket playerConnection;
 
-    private int MAX_CONNECTIONS = 100;
-    public static List<Socket> ConnectedPlayers;
+    private List<Socket> connectedPlayers;
+
+    private DisconnectPlayerPacket disconnectPlayerPacket;
+
+    public Server(Socket connection, List<Socket> connectedPlayers)
+    {
+        bufferLength = new byte[1024];
+        this.connectedPlayers = connectedPlayers;
+        playerConnection = connection;
+    }
 
     public Server()
     {
-        ConnectedPlayers = new List<Socket>();
-        this.HOST = "localhost";
-        this.PORT = 11000;
+        
     }
 
-    public void Start()
+    public void Listening()
     {
-        Socket SocketConnection = Config();
-
-        WellcomeMessage();
-
-        Listener(SocketConnection);
-    }
-
-    public Socket Config()
-    {
-        AddressFamily IPAdressFamily = GetAdressFamily();
-        IPEndPoint IpEndPoint = prepareEndPoint();
-
-        Socket SocketConnection
-            = new Socket(IPAdressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-        SocketConnection.Bind(IpEndPoint);
-        SocketConnection.Listen(MAX_CONNECTIONS);
-
-        return SocketConnection;
-    }
-
-    private AddressFamily GetAdressFamily()
-    {
-        return GetIpAddress().AddressFamily;
-    }
-
-    private IPEndPoint prepareEndPoint()
-    {
-        IP_ADDRESS = GetIpAddress();
-        IPEndPoint EndPoint = new IPEndPoint(IP_ADDRESS, PORT);
-
-        return EndPoint;
-    }
-
-    private IPAddress GetIpAddress()
-    {
-
-        IPHostEntry DNS = Dns.GetHostEntry(this.HOST);
-        IPAddress ip = DNS.AddressList[0];
-
-        return ip;
-    }
-
-    public void WellcomeMessage()
-    {
-        Console.WriteLine("[STATUS]: Working\n");
-    }
-
-    public void Listener(Socket listenerSocket)
-    {
+        Console.WriteLine("- {0} players connected", connectedPlayers.Count);
         while (RunForever())
         {
-            Socket handler = listenerSocket.Accept();
-
-            ConnectedPlayers.Add(handler);
-
-            InvokeHandlerMessagesWithThread(handler);
+            Handler();
         }
+        
     }
 
-    public bool RunForever()
+    private bool RunForever()
     {
         return true;
     }
 
-    public void InvokeHandlerMessagesWithThread(Socket SocketConnection)
+    private void Handler()
     {
-        HandlerPackets PacketsManager = new HandlerPackets(SocketConnection, ConnectedPlayers);
+        int packetBytes = playerConnection.Receive(bufferLength);
+        string packet = Encoding.UTF8.GetString(bufferLength, 0, packetBytes);
+        
+        disconnectPlayerPacket = new DisconnectPlayerPacket(playerConnection, connectedPlayers);
+        disconnectPlayerPacket.Handler(packet);
+    }
+    private void SendMessageToClient(string packetData)
+    {
+        var packet = Encoding.ASCII.GetBytes(packetData);
+        playerConnection.Send(packet);
+    }
 
-        Thread HandlerPacketsThread = new Thread(PacketsManager.Listening);
-        HandlerPacketsThread.Start();
+    
+
+    
+
+    private void SendToAllPlayers(byte[] Data)
+    {
+        foreach (Socket Connection in connectedPlayers.ToList())
+        {
+            Connection.Send(Data);
+        }
     }
 }

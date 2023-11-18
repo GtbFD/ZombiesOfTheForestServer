@@ -2,7 +2,7 @@ class LaunchServer
 {
     public static void Main(String[] args)
     {
-        Server ServerApp = new Server();
-        ServerApp.Start();
+        var serverApp = new ServerConfiguration();
+        serverApp.Start();
     }
 }
