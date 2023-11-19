@@ -2,14 +2,14 @@
 
 public class Opcode
 {
-    private String packet;
+    private string packet;
 
-    public Opcode(String packet)
+    public Opcode(string packet)
     {
         this.packet = packet;
     }
 
-    public String GetOpcode()
+    public string GetOpcode()
     {
         return packet.Substring(0, packet.Length);
     }

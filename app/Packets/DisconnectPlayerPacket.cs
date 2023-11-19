@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using System.Text;
+using app;
 using app.Packets;
 
 class DisconnectPlayerPacket : Packet
@@ -16,17 +17,18 @@ class DisconnectPlayerPacket : Packet
         this.connectedPlayers = connectedPlayers;
     }
 
-    public void Handler(String packetReceived)
+    public override void Handler(string packetReceived)
     {
         opcode = new Opcode(packetReceived).GetOpcode();
 
-        if (!opcode.Equals("0000")) return;
-        
-        Read(packetReceived);
-        Write();
+        if (opcode.Equals("0000"))
+        {
+            Read(packetReceived);
+            Write();
+        }
     }
 
-    public override void Read(String packetReceived)
+    public override void Read(string packetReceived)
     {
         PrintReceivedMessage();
         opcode = new Opcode(packetReceived).GetOpcode();
@@ -43,7 +45,8 @@ class DisconnectPlayerPacket : Packet
         
         DisconnectPlayer(playerConnection);
         var commandToLeave = Encoding.ASCII.GetBytes("0000");
-        playerConnection.Send(commandToLeave);
+        
+        new IndividualPacket(playerConnection).Send(commandToLeave);
 
     }
 
@@ -60,16 +63,14 @@ class DisconnectPlayerPacket : Packet
         }
     }
     
-    public void FindAndRemovePlayer(Socket playerConnection)
+    private void FindAndRemovePlayer(Socket playerConnection)
     {
-        foreach(var Connection in connectedPlayers.ToList())
+        foreach(var connection in connectedPlayers.ToList())
         {
-            if (playerConnection.RemoteEndPoint.ToString()
-                .Equals(Connection.RemoteEndPoint.ToString()))
-            {
-                connectedPlayers.Remove(Connection);
-                break;
-            }
+            if (!playerConnection.RemoteEndPoint.ToString()
+                    .Equals(connection.RemoteEndPoint.ToString())) continue;
+            connectedPlayers.Remove(connection);
+            break;
         }
     }
 }
