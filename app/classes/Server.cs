@@ -1,6 +1,8 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
+using app;
+using app.Packets;
 using Newtonsoft.Json;
 
 class Server
@@ -11,9 +13,7 @@ class Server
     private Socket playerConnection;
 
     private List<Socket> connectedPlayers;
-
-    private DisconnectPlayerPacket disconnectPlayerPacket;
-
+    
     public Server(Socket connection, List<Socket> connectedPlayers)
     {
         bufferLength = new byte[1024];
@@ -43,27 +43,21 @@ class Server
 
     private void Handler()
     {
-        int packetBytes = playerConnection.Receive(bufferLength);
-        string packet = Encoding.UTF8.GetString(bufferLength, 0, packetBytes);
+        var packetBytes = playerConnection.Receive(bufferLength);
+        var packetReceived = Encoding.UTF8.GetString(bufferLength, 0, packetBytes);
+
+        if (connectedPlayers.Count < 1) return;
         
-        disconnectPlayerPacket = new DisconnectPlayerPacket(playerConnection, connectedPlayers);
-        disconnectPlayerPacket.Handler(packet);
-    }
-    private void SendMessageToClient(string packetData)
-    {
-        var packet = Encoding.ASCII.GetBytes(packetData);
-        playerConnection.Send(packet);
-    }
+        Console.WriteLine(packetReceived);
 
-    
-
-    
-
-    private void SendToAllPlayers(byte[] Data)
-    {
-        foreach (Socket Connection in connectedPlayers.ToList())
+        var packets = new List<IPacket>
         {
-            Connection.Send(Data);
-        }
+            new PlayerListPacket(playerConnection, connectedPlayers),
+            new DisconnectPlayerPacket(playerConnection, connectedPlayers)
+        };
+
+        var packetManager = new PacketManager(packets);
+        packetManager.Manager(packetReceived);
     }
+
 }

@@ -1,7 +1,8 @@
 using System;
 
-interface IPacket
+public interface IPacket
 {
-    public void Read(String PacketReceived);
+    public void Read(String packetReceived);
     public void Write();
+    public void Handler(String packetReceived);
 }

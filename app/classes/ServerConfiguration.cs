@@ -28,10 +28,10 @@ class ServerConfiguration
         Listener(socketConnection);
     }
 
-    public Socket Config()
+    private Socket Config()
     {
-        AddressFamily IPAdressFamily = GetAdressFamily();
-        IPEndPoint IpEndPoint = prepareEndPoint();
+        var IPAdressFamily = GetAdressFamily();
+        var IpEndPoint = prepareEndPoint();
 
         Socket SocketConnection
             = new Socket(IPAdressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -50,7 +50,7 @@ class ServerConfiguration
     private IPEndPoint prepareEndPoint()
     {
         IP_ADDRESS = GetIpAddress();
-        IPEndPoint EndPoint = new IPEndPoint(IP_ADDRESS, PORT);
+        var EndPoint = new IPEndPoint(IP_ADDRESS, PORT);
 
         return EndPoint;
     }
@@ -58,22 +58,22 @@ class ServerConfiguration
     private IPAddress GetIpAddress()
     {
 
-        IPHostEntry DNS = Dns.GetHostEntry(this.HOST);
-        IPAddress ip = DNS.AddressList[0];
+        var DNS = Dns.GetHostEntry(this.HOST);
+        var ip = DNS.AddressList[0];
 
         return ip;
     }
 
-    public void WellcomeMessage()
+    private void WellcomeMessage()
     {
         Console.WriteLine("[STATUS]: Working\n");
     }
 
-    public void Listener(Socket listenerSocket)
+    private void Listener(Socket listenerSocket)
     {
         while (RunForever())
         {
-            Socket handler = listenerSocket.Accept();
+            var handler = listenerSocket.Accept();
 
             ConnectedPlayers.Add(handler);
 
@@ -81,16 +81,16 @@ class ServerConfiguration
         }
     }
 
-    public bool RunForever()
+    private bool RunForever()
     {
         return true;
     }
 
-    public void InvokeHandlerMessagesWithThread(Socket SocketConnection)
+    private void InvokeHandlerMessagesWithThread(Socket SocketConnection)
     {
         var server = new Server(SocketConnection, ConnectedPlayers);
 
-        Thread serverThread = new Thread(server.Listening);
+        var serverThread = new Thread(server.Listening);
         serverThread.Start();
     }
 }
