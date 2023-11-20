@@ -8,13 +8,10 @@ public class PlayerListPacket : Packet
     private byte[] BUFFER = new byte[1024];
     private Socket playerConnection;
     private String opcode;
-    
-    private List<Socket> connectedPlayers;
-    
-    public PlayerListPacket(Socket playerConnection, List<Socket> connectedPlayers)
+
+    public PlayerListPacket(Socket playerConnection)
     {
         this.playerConnection = playerConnection;
-        this.connectedPlayers = connectedPlayers;
     }
     
     public override void Handler(string packetReceived)
@@ -44,10 +41,10 @@ public class PlayerListPacket : Packet
     {
         PrintSendedMessage();
     
-        var quantityPlayers = "" + connectedPlayers.Count;
+        var quantityPlayers = "" + ListPlayers.GetInstance().GetList().Count;
         
-        var quantityPlayersConnected = Encoding.ASCII.GetBytes("0001");
-        new BroadcastingPacket(connectedPlayers).Send(quantityPlayersConnected);
+        var quantityPlayersConnected = Encoding.ASCII.GetBytes(quantityPlayers);
+        new BroadcastingPacket(ListPlayers.GetInstance().GetList()).Send(quantityPlayersConnected);
     }
     
     public override void PrintSendedMessage()

@@ -15,4 +15,5 @@ public abstract class Packet : IPacket
     public abstract void PrintReceivedMessage();
 
     public abstract void PrintSendedMessage();
+    
 }
