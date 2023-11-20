@@ -22,6 +22,7 @@ class DisconnectPlayerPacket : Packet
         {
             Read(packetReceived);
             Write();
+            new PlayerListPacket(playerConnection).Handler("0001");
         }
     }
 
