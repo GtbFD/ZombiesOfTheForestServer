@@ -8,13 +8,10 @@ class DisconnectPlayerPacket : Packet
     private byte[] BUFFER = new byte[1024];
     private Socket playerConnection;
     private String opcode;
-    
-    private List<Socket> connectedPlayers;
 
-    public DisconnectPlayerPacket(Socket playerConnection, List<Socket> connectedPlayers)
+    public DisconnectPlayerPacket(Socket playerConnection)
     {
         this.playerConnection = playerConnection;
-        this.connectedPlayers = connectedPlayers;
     }
 
     public override void Handler(string packetReceived)
@@ -43,10 +40,10 @@ class DisconnectPlayerPacket : Packet
     { 
         PrintSendedMessage();
         
-        DisconnectPlayer(playerConnection);
         var commandToLeave = Encoding.ASCII.GetBytes("0000");
         
         new IndividualPacket(playerConnection).Send(commandToLeave);
+        DisconnectPlayer(playerConnection);
 
     }
 
@@ -57,20 +54,7 @@ class DisconnectPlayerPacket : Packet
     
     private void DisconnectPlayer(Socket playerConnection)
     {
-        foreach(var player in connectedPlayers.ToList())
-        {
-            FindAndRemovePlayer(playerConnection);
-        }
+        ListPlayers.GetInstance().FindAndRemovePlayer(playerConnection);
     }
     
-    private void FindAndRemovePlayer(Socket playerConnection)
-    {
-        foreach(var connection in connectedPlayers.ToList())
-        {
-            if (!playerConnection.RemoteEndPoint.ToString()
-                    .Equals(connection.RemoteEndPoint.ToString())) continue;
-            connectedPlayers.Remove(connection);
-            break;
-        }
-    }
 }

@@ -11,8 +11,6 @@ public class PacketManager
 
     public void Manager(string packetReceived)
     {
-        if (packetReceived.Length == 0) return;
-        
         foreach (var packet in packets)
         {
             packet.Handler(packetReceived);

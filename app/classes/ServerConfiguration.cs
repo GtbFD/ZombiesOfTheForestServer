@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using app;
 
 class ServerConfiguration
 {
@@ -10,11 +11,11 @@ class ServerConfiguration
     private IPAddress IP_ADDRESS;
 
     private int MAX_CONNECTIONS = 100;
-    public static List<Socket> ConnectedPlayers;
+    private static ListPlayers connectedPlayers;
 
     public ServerConfiguration()
     {
-        ConnectedPlayers = new List<Socket>();
+        connectedPlayers = ListPlayers.GetInstance();
         this.HOST = "localhost";
         this.PORT = 11000;
     }
@@ -75,7 +76,7 @@ class ServerConfiguration
         {
             var handler = listenerSocket.Accept();
 
-            ConnectedPlayers.Add(handler);
+            connectedPlayers.AddPlayer(handler);
 
             InvokeHandlerMessagesWithThread(handler);
         }
@@ -88,7 +89,8 @@ class ServerConfiguration
 
     private void InvokeHandlerMessagesWithThread(Socket SocketConnection)
     {
-        var server = new Server(SocketConnection, ConnectedPlayers);
+
+        var server = new Server(SocketConnection);
 
         var serverThread = new Thread(server.Listening);
         serverThread.Start();

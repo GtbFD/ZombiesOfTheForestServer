@@ -12,12 +12,9 @@ class Server
     private byte[] bufferLength;
     private Socket playerConnection;
 
-    private List<Socket> connectedPlayers;
-    
-    public Server(Socket connection, List<Socket> connectedPlayers)
+    public Server(Socket connection)
     {
         bufferLength = new byte[1024];
-        this.connectedPlayers = connectedPlayers;
         playerConnection = connection;
     }
 
@@ -28,12 +25,17 @@ class Server
 
     public void Listening()
     {
-        Console.WriteLine("- {0} players connected", connectedPlayers.Count);
+        Console.WriteLine("- {0} players connected", GetListConnectedPlayers().Count);
         while (RunForever())
         {
             Handler();
         }
         
+    }
+
+    private List<Socket> GetListConnectedPlayers()
+    {
+        return ListPlayers.GetInstance().GetList();
     }
 
     private bool RunForever()
@@ -43,21 +45,25 @@ class Server
 
     private void Handler()
     {
-        var packetBytes = playerConnection.Receive(bufferLength);
-        var packetReceived = Encoding.UTF8.GetString(bufferLength, 0, packetBytes);
-
-        if (connectedPlayers.Count < 1) return;
-        
-        Console.WriteLine(packetReceived);
-
-        var packets = new List<IPacket>
+        if (HasPlayers())
         {
-            new PlayerListPacket(playerConnection, connectedPlayers),
-            new DisconnectPlayerPacket(playerConnection, connectedPlayers)
-        };
+            var packetBytes = playerConnection.Receive(bufferLength);
+            var packetReceived = Encoding.UTF8.GetString(bufferLength, 0, packetBytes);
+            
+            var packets = new List<IPacket>
+            {
+                new PlayerListPacket(playerConnection),
+                new DisconnectPlayerPacket(playerConnection)
+            };
 
-        var packetManager = new PacketManager(packets);
-        packetManager.Manager(packetReceived);
+            var packetManager = new PacketManager(packets);
+            packetManager.Manager(packetReceived);
+        }
+    }
+
+    private bool HasPlayers()
+    {
+        return GetListConnectedPlayers().Count >= 1;
     }
 
 }
