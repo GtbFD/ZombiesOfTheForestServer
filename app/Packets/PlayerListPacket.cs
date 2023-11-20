@@ -41,7 +41,7 @@ public class PlayerListPacket : Packet
     {
         PrintSendedMessage();
     
-        var quantityPlayers = "" + ListPlayers.GetInstance().GetList().Count;
+        var quantityPlayers = "0001" + ListPlayers.GetInstance().GetList().Count;
         
         var quantityPlayersConnected = Encoding.ASCII.GetBytes(quantityPlayers);
         new BroadcastingPacket(ListPlayers.GetInstance().GetList()).Send(quantityPlayersConnected);
