@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace app.Packets;
 
@@ -16,9 +17,9 @@ public class PlayerListPacket : Packet
     
     public override void Handler(string packetReceived)
     {
-        opcode = new Opcode(packetReceived).GetOpcode();
+        var updateConnectedPlayersPacket = JsonConvert.DeserializeObject<UpdateConnectedPlayers>(packetReceived);
 
-        if (opcode.Equals("0001"))
+        if (updateConnectedPlayersPacket.opcode == 1)
         {
             Read(packetReceived);
             Write();
@@ -29,7 +30,6 @@ public class PlayerListPacket : Packet
     public override void Read(string packetReceived)
     {
         PrintReceivedMessage();
-        opcode = new Opcode(packetReceived).GetOpcode();
     }
     
     public override void PrintReceivedMessage()
@@ -40,11 +40,15 @@ public class PlayerListPacket : Packet
     public override void Write()
     {
         PrintSendedMessage();
-    
-        var quantityPlayers = "0001" + ListPlayers.GetInstance().GetList().Count;
+
+        var updateConnectedPlayers = new UpdateConnectedPlayers();
+        updateConnectedPlayers.opcode = 1;
+        updateConnectedPlayers.quantity = ListPlayers.GetInstance().GetList().Count;
+
+        var updateConnectedPlayersSerialized = JsonConvert.SerializeObject(updateConnectedPlayers);
+        var updateConnectedPlayersPacket = Encoding.ASCII.GetBytes(updateConnectedPlayersSerialized);
         
-        var quantityPlayersConnected = Encoding.ASCII.GetBytes(quantityPlayers);
-        new BroadcastingPacket(ListPlayers.GetInstance().GetList()).Send(quantityPlayersConnected);
+        new BroadcastingPacket(ListPlayers.GetInstance().GetList()).Send(updateConnectedPlayersPacket);
     }
     
     public override void PrintSendedMessage()
