@@ -11,6 +11,6 @@ public class Opcode
 
     public string GetOpcode()
     {
-        return packet.Substring(0, packet.Length);
+        return packet.Substring(0, 4);
     }
 }

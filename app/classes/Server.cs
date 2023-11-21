@@ -53,7 +53,8 @@ class Server
             var packets = new List<IPacket>
             {
                 new PlayerListPacket(playerConnection),
-                new DisconnectPlayerPacket(playerConnection)
+                new DisconnectPlayerPacket(playerConnection),
+                new PlayerPositionPacket(playerConnection)
             };
 
             var packetManager = new PacketManager(packets);
