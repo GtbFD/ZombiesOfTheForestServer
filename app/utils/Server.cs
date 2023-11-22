@@ -50,7 +50,7 @@ class Server
             var packetBytes = playerConnection.Receive(bufferLength);
             var packetReceived = Encoding.UTF8.GetString(bufferLength, 0, packetBytes);
             
-            var packets = new List<IPacket>
+            var packets = new List<IPacketHandler>
             {
                 new PlayerListPacket(playerConnection),
                 new DisconnectPlayerPacket(playerConnection),

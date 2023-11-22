@@ -13,11 +13,11 @@ public class BroadcastingPacket : ISendMessage
         this.connectedPlayers = connectedPlayers;
     }
     
-    public void Send(byte[] data)
+    public void Send(IPacket data)
     {
         foreach (var connection in connectedPlayers.ToList())
         {
-            connection.Send(data);
+            connection.Send(new SerializePacket().Serialize(data));
         }
     }
 }

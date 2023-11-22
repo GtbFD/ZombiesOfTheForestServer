@@ -13,8 +13,10 @@ public class IndividualPacket : ISendMessage
         this.playerConnection = playerConnection;
     }
     
-    public void Send(byte[] data)
+    public void Send(IPacket data)
     {
-        playerConnection.Send(data);
+        SerializePacket serializePacket = new SerializePacket();
+        string packet = serializePacket.ObjectToString(data);
+        playerConnection.Send(new SerializePacket().Serialize(packet));
     }
 }
