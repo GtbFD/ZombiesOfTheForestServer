@@ -1,10 +1,12 @@
-﻿namespace app;
+﻿using app.interfaces;
+
+namespace app;
 
 public class PacketManager
 {
-    private List<IPacket> packets;
+    private List<IPacketHandler> packets;
 
-    public PacketManager(List<IPacket> packets)
+    public PacketManager(List<IPacketHandler> packets)
     {
         this.packets = packets;
     }
