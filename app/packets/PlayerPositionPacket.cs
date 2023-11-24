@@ -19,22 +19,19 @@ public class PlayerPositionPacket : IPacketHandler
     
     public void Handler(string packetReceived)
     {
-        playerPositionPacket = 
+        
+        /*if (packetReceived.Contains("\"opcode\":2"))
+        {
+            Console.WriteLine(packetReceived);
+        }*/
+        /*playerPositionPacket = 
             new DeserializePacket().Deserialize<PlayerPosition>(packetReceived);
 
-        if (playerPositionPacket != null && playerPositionPacket.opcode == 2)
+        if (playerPositionPacket is { opcode: 2 })
         {
             Read(packetReceived);
             Write();
-        }
-    }
-
-    public void Serialize()
-    {
-    }
-
-    public void Deserialize()
-    {
+        }*/
     }
 
     public void Read(string packetReceived)
@@ -51,7 +48,7 @@ public class PlayerPositionPacket : IPacketHandler
     {
         PrintSendedMessage();
 
-        var playerPositionPacketWrite = new PlayerPosition
+        /*var playerPositionPacketWrite = new PlayerPosition
         {
             opcode = 2,
             x = playerPositionPacket.x,
@@ -59,11 +56,11 @@ public class PlayerPositionPacket : IPacketHandler
             z = playerPositionPacket.z
         };
         
-        //new BroadcastingPacket(ListPlayers.GetInstance().GetList()).Send(playerPositionPacketWrite);
+        new BroadcastingPacket(PlayerList.GetInstance().GetList()).Send(playerPositionPacketWrite);*/
     }
     
     public void PrintSendedMessage()
     {
-        Console.WriteLine("-> Sendind players list to all players");
+        Console.WriteLine("-> Sendind players position to all players");
     }
 }
