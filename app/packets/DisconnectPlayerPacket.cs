@@ -22,12 +22,12 @@ class DisconnectPlayerPacket : IPacketHandler
         var disconnectPlayerPacket 
             = new DeserializePacket().Deserialize<DisconnectPlayer>(packetReceived);
 
-        if (disconnectPlayerPacket != null && disconnectPlayerPacket.opcode == 0)
+        if (disconnectPlayerPacket is { opcode: 0 })
         {
             Read(packetReceived);
             Write();
 
-            UpdateConnectedPlayers updateConnectedPlayers = new UpdateConnectedPlayers
+            var updateConnectedPlayers = new UpdateConnectedPlayers
             {
                 opcode = 1,
                 quantity = 0
@@ -38,15 +38,9 @@ class DisconnectPlayerPacket : IPacketHandler
         }
     }
 
-    public void Serialize()
-    {
-        
-    }
-
     public void Read(string packetReceived)
     {
         PrintReceivedMessage();
-        /*opcode = new Opcode(packetReceived).GetOpcode();*/
     }
     
     public void PrintReceivedMessage()
@@ -58,9 +52,11 @@ class DisconnectPlayerPacket : IPacketHandler
     { 
         PrintSendedMessage();
 
-        var disconnectPlayer = new DisconnectPlayer();
-        disconnectPlayer.opcode = 0;
-        
+        var disconnectPlayer = new DisconnectPlayer
+        {
+            opcode = 0
+        };
+
         new IndividualPacket(playerConnection).Send(disconnectPlayer);
         DisconnectPlayer(playerConnection);
 
@@ -73,7 +69,7 @@ class DisconnectPlayerPacket : IPacketHandler
 
     private void DisconnectPlayer(Socket playerConnection)
     {
-        ListPlayers.GetInstance().FindAndRemovePlayer(playerConnection);
+        PlayerList.GetInstance().FindAndRemovePlayer(playerConnection);
     }
     
 }

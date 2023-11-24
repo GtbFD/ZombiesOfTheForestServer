@@ -2,21 +2,21 @@
 
 namespace app;
 
-public sealed class ListPlayers
+public sealed class PlayerList
 {
     private static List<Socket> connectedPlayers;
     
-    private static ListPlayers _listPlayers;
+    private static PlayerList _playerList;
 
-    public static ListPlayers GetInstance()
+    public static PlayerList GetInstance()
     {
-        if (_listPlayers == null)
+        if (_playerList == null)
         {
-            _listPlayers = new ListPlayers();
+            _playerList = new PlayerList();
             connectedPlayers = new List<Socket>();
         }
 
-        return _listPlayers;
+        return _playerList;
     }
 
     public List<Socket> GetList()

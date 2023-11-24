@@ -11,11 +11,11 @@ class ServerConfiguration
     private IPAddress IP_ADDRESS;
 
     private int MAX_CONNECTIONS = 100;
-    private static ListPlayers connectedPlayers;
+    private static PlayerList _connected;
 
     public ServerConfiguration()
     {
-        connectedPlayers = ListPlayers.GetInstance();
+        _connected = PlayerList.GetInstance();
         this.HOST = "localhost";
         this.PORT = 11000;
     }
@@ -76,7 +76,7 @@ class ServerConfiguration
         {
             var handler = listenerSocket.Accept();
 
-            connectedPlayers.AddPlayer(handler);
+            _connected.AddPlayer(handler);
 
             InvokeHandlerMessagesWithThread(handler);
         }

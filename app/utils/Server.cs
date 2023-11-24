@@ -35,7 +35,7 @@ class Server
 
     private List<Socket> GetListConnectedPlayers()
     {
-        return ListPlayers.GetInstance().GetList();
+        return PlayerList.GetInstance().GetList();
     }
 
     private bool RunForever()
@@ -54,7 +54,7 @@ class Server
             {
                 new PlayerListPacket(playerConnection),
                 new DisconnectPlayerPacket(playerConnection),
-                new PlayerPositionPacket(playerConnection)
+                //new PlayerPositionPacket(playerConnection)
             };
 
             var packetManager = new PacketManager(packets);

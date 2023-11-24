@@ -20,24 +20,14 @@ public class PlayerListPacket : IPacketHandler
         var updateConnectedPlayersPacket = 
             new DeserializePacket().Deserialize<UpdateConnectedPlayers>(packetReceived);
 
-        if (updateConnectedPlayersPacket != null && updateConnectedPlayersPacket.opcode == 1)
+        if (updateConnectedPlayersPacket is { opcode: 1 })
         {
             Read(packetReceived);
             Write();
         }
 
     }
-
-    public void Serialize()
-    {
-        
-    }
-
-    public void Deserialize()
-    {
-        
-    }
-
+    
     public void Read(string packetReceived)
     {
         PrintReceivedMessage();
@@ -55,11 +45,11 @@ public class PlayerListPacket : IPacketHandler
         var updateConnectedPlayers = new UpdateConnectedPlayers
         {
             opcode = 1,
-            quantity = ListPlayers.GetInstance().GetList().Count
+            quantity = PlayerList.GetInstance().GetList().Count
         };
-        
-        
-        new BroadcastingPacket(ListPlayers.GetInstance().GetList()).Send(updateConnectedPlayers);
+
+        var playersList = PlayerList.GetInstance().GetList();
+        new BroadcastingPacket(playersList).Send(updateConnectedPlayers);
     }
     
     public void PrintSendedMessage()
