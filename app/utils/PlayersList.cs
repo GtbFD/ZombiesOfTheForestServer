@@ -24,6 +24,11 @@ public sealed class PlayerList
         return connectedPlayers;
     }
 
+    public bool HasPlayers()
+    {
+        return connectedPlayers.Count >= 1;
+    }
+
     public void FindAndRemovePlayer(Socket player)
     {
         foreach(var connection in connectedPlayers.ToList())
