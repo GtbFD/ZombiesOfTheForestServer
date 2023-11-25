@@ -36,7 +36,7 @@ public sealed class PlayerList
             if (player.RemoteEndPoint.ToString()
                 .Equals(connection.RemoteEndPoint.ToString()))
             {
-                connectedPlayers.Remove(connection);
+                connectedPlayers.Remove(player);
             }
         }
     }

@@ -1,6 +1,4 @@
-﻿using app.interfaces;
-
-namespace app;
+﻿namespace app.utils.io;
 
 public class PacketManager
 {
