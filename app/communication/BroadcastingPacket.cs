@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using app.interfaces;
+using app.utils.io;
 
 namespace app;
 
@@ -17,7 +18,7 @@ public class BroadcastingPacket : ISendMessage
     {
         foreach (var connection in connectedPlayers.ToList())
         {
-            connection.Send(new SerializePacket().Serialize(data));
+            connection.Send(SerializePacket.Serialize(data));
         }
     }
 }

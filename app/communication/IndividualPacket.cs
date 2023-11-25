@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using app.interfaces;
+using app.utils.io;
 
 namespace app;
 
@@ -15,8 +16,6 @@ public class IndividualPacket : ISendMessage
     
     public void Send(IPacket data)
     {
-        SerializePacket serializePacket = new SerializePacket();
-        string packet = serializePacket.ObjectToString(data);
-        playerConnection.Send(new SerializePacket().Serialize(packet));
+        playerConnection.Send(SerializePacket.Serialize(data));
     }
 }
