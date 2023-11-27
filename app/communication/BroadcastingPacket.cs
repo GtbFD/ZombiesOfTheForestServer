@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using app.interfaces;
+using app.models;
 using app.utils.io;
 
 namespace app;
@@ -7,18 +8,23 @@ namespace app;
 public class BroadcastingPacket : ISendMessage
 {
 
-    private List<Socket> connectedPlayers;
+    private List<Player> connectedPlayers;
+    private Socket connection;
     
-    public BroadcastingPacket(List<Socket> connectedPlayers)
+    public BroadcastingPacket(Socket connection, List<Player> connectedPlayers)
     {
         this.connectedPlayers = connectedPlayers;
+        this.connection = connection;
     }
     
     public void Send(IPacket data)
     {
-        foreach (var connection in connectedPlayers.ToList())
+        foreach (var player in connectedPlayers.ToList())
         {
-            connection.Send(SerializePacket.Serialize(data));
+            if (player.connection.Connected && !player.connection.RemoteEndPoint.Equals(connection))
+            {
+                player.connection.Send(SerializePacket.Serialize(data));
+            }
         }
     }
 }

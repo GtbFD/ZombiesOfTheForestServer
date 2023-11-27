@@ -14,7 +14,7 @@ public class ServerInfo
     {
         host = "localhost";
         port = 11000;
-        buffer = new byte[1024];
+        buffer = new byte[8192];
     }
 
     public string GetHost()

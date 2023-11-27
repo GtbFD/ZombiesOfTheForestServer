@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
-using app;
-using app.server;
+using app.models;
+
+namespace app.server;
 
 class ServerConfiguration
 {
@@ -30,20 +31,27 @@ class ServerConfiguration
     {
         while (true)
         {
-            var acceptedConnection = listenerSocket.Accept();
+            var acceptedConnection = listenerSocket.AcceptAsync();
 
-            PlayerList.GetInstance().AddPlayer(acceptedConnection);
-
+            var player = new Player()
+            {
+                connection = acceptedConnection.Result,
+                localization = null
+            };
+            
+            PlayerList.GetInstance().AddPlayer(player);
+            Console.WriteLine("- {0} player(s) connected", PlayerList.GetInstance().GetList().Count);
             ListenToPackets(acceptedConnection);
         }
     }
     
 
-    private void ListenToPackets(Socket connection)
+    private void ListenToPackets(Task<Socket> connection)
     {
         var packetListener = new PacketListener(connection);
 
         var serverThread = new Thread(packetListener.ListenToPackets);
         serverThread.Start();
+        
     }
 }
