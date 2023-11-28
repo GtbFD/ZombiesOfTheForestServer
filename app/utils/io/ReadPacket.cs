@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 
@@ -36,15 +37,15 @@ public class ReadPacket
     {
         length -= 1;
         var hex = "";
-        
+
         while (offset <= (offset + length))
         {
-
-            hex += packet[offset].ToString("X");//(int) Char.GetNumericValue((char)packet[offset]);
+            hex += (char) packet[offset];//(int) Char.GetNumericValue((char)packet[offset]);
             length--;
             offset++;
         }
-        //Console.Write(hex);
-        return Convert.ToInt32(hex, 16); //(int)decimal.Parse(hex, NumberStyles.HexNumber);
+        var number = Convert.ToInt32(hex);
+        //Console.WriteLine(number.ToString("X"));
+        return number; //(int)decimal.Parse(hex, NumberStyles.HexNumber);
     }
 }
