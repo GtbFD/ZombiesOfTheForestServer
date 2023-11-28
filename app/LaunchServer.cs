@@ -9,13 +9,14 @@ class LaunchServer
         /*var serverApp = new ServerConfiguration();
         serverApp.Start();*/
 
-        var packet = "GUGA21";
-        var packetEncoded = Encoding.ASCII.GetBytes(packet);
-        var hexPacket = Convert.ToHexString(packetEncoded);
-        Console.WriteLine(hexPacket);
+        var packet = new byte[]{0x30, 0x31, 0x32, 0x38};
+        //var packetBytes = Encoding.ASCII.GetBytes(packet);
 
-        var readPacket = new ReadPacket(packetEncoded);
-        Console.WriteLine(readPacket.ReadS(4));
+        var reader = new ReadPacket(packet);
+        var packetStart = reader.ReadS(2);
+        var opcode = reader.ReadI(2);
+        
+        Console.Write("STARTER > " + packetStart + " OPCODE > " + opcode);
     }
 
 }
