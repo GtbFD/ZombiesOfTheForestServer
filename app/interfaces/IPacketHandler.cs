@@ -3,8 +3,8 @@ using app.interfaces;
 
 public interface IPacketHandler
 {
-    public void Read(string packetReceived);
-    public void Write(string packetReceived);
-    public void Handler(string packetReceived);
+    public void Read(byte[] packetReceived);
+    public void Write();
+    public void Handler(byte[] packetReceived);
     
 }

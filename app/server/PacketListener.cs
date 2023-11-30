@@ -25,7 +25,8 @@ class PacketListener
                 var buffer = new ServerInfo().GetBuffer();
                 var packetBytes = playerConnection.Result.ReceiveAsync(buffer);
                 var packetReceived = Encoding.UTF8.GetString(buffer, 0, packetBytes.Result);
-                
+
+                var packet = Encoding.ASCII.GetBytes(packetReceived);
 
                 if (!packetReceived.Equals(""))
                 {
@@ -33,12 +34,12 @@ class PacketListener
                     var packets = new List<IPacketHandler>
                     {
                         new LoginPlayerHandler(playerConnection.Result),
-                        //new DisconnectPlayerHandler(playerConnection.Result),
-                        //new PlayerLocalizationHandler(playerConnection.Result)
+                        new DisconnectPlayerHandler(playerConnection.Result),
+                        new PlayerLocalizationHandler(playerConnection.Result)
                     };
 
                     var packetManager = new PacketManager(packets);
-                    packetManager.Manager(packetReceived);
+                    packetManager.Manager(packet);
 
                     hasPlayers = PlayerList.GetInstance().HasPlayers();
                 }

@@ -17,13 +17,13 @@ public class BroadcastingPacket : ISendMessage
         this.connection = connection;
     }
     
-    public void Send(IPacket data)
+    public void Send(byte[] data)
     {
         foreach (var player in connectedPlayers.ToList())
         {
             if (player.connection.Connected && !player.connection.RemoteEndPoint.Equals(connection))
             {
-                player.connection.Send(SerializePacket.Serialize(data));
+                player.connection.Send(data);
             }
         }
     }

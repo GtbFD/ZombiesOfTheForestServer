@@ -14,8 +14,8 @@ public class IndividualPacket : ISendMessage
         this.playerConnection = playerConnection;
     }
     
-    public void Send(IPacket data)
+    public void Send(byte[] data)
     {
-        playerConnection.Send(SerializePacket.Serialize(data));
+        playerConnection.Send(data);
     }
 }

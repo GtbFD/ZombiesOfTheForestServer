@@ -7,45 +7,148 @@ namespace app.utils.io;
 
 public class ReadPacket
 {
-    private byte[] packet;
-    public int offset;
+    private byte[] readableBuffer;
+    private List<byte> buffer;
+    public int readPos;
 
+    
     public ReadPacket(byte[] packet)
     {
-        offset = 0;
-        this.packet = packet;
+        readableBuffer = packet.ToArray();
+        readPos = 0;
+        buffer = new List<byte>();
+        buffer.AddRange(packet);
+    }
+
+    
+
+    public int ReadByte()
+    {
+        if (readableBuffer.Length > readPos)
+        {
+            var _value = readableBuffer[readPos];
+            
+            readPos += 1; 
+            
+            return _value;
+        }
+        else
+        {
+            throw new Exception("Could not read value of type 'byte'!");
+        }
     }
     
-    public string ReadS(int length)
+    public byte[] ReadBytes(int length)
     {
-        length -= 1;
-        var bytes = new List<byte>();
-        var data = "";
-        while (offset <= (offset + length))
+        if (readableBuffer.Length > readPos)
         {
-            bytes.Add(packet[offset]);
-            length--;
-            offset++;
+            var _value = buffer.GetRange(readPos, length).ToArray();
+            
+            readPos += length; 
+            
+            return _value;
         }
-        
-        data = Encoding.ASCII.GetString(bytes.ToArray());
-        
-        return data;
+        else
+        {
+            throw new Exception("Could not read value of type 'byte[]'!");
+        }
     }
 
-    public int ReadI(int length)
+    public int ReadInt()
     {
-        length -= 1;
-        var hex = "";
-
-        while (offset <= (offset + length))
+        
+        if (readableBuffer.Length > readPos)
         {
-            hex += (char) packet[offset];//(int) Char.GetNumericValue((char)packet[offset]);
-            length--;
-            offset++;
+            var value = BitConverter.ToInt32(readableBuffer, readPos);
+            readPos += 4;
+            return value;
+        }else
+        {
+            throw new Exception("Could not read value of type 'int'!");
         }
-        var number = Convert.ToInt32(hex);
-        //Console.WriteLine(number.ToString("X"));
-        return number; //(int)decimal.Parse(hex, NumberStyles.HexNumber);
+    }
+    
+    public long ReadLong()
+    {
+        
+        if (readableBuffer.Length > readPos)
+        {
+            var value = BitConverter.ToInt64(readableBuffer, readPos);
+            readPos += 8;
+            return value;
+        }else
+        {
+            throw new Exception("Could not read value of type 'long'!");
+        }
+    }
+    
+    public long ReadShort()
+    {
+        
+        if (readableBuffer.Length > readPos)
+        {
+            var value = BitConverter.ToInt16(readableBuffer, readPos);
+            readPos += 2;
+            return value;
+        }else
+        {
+            throw new Exception("Could not read value of type 'short'!");
+        }
+    }
+    
+    public float ReadFloat()
+    {
+        
+        if (readableBuffer.Length > readPos)
+        {
+            var value = BitConverter.ToSingle(readableBuffer, readPos);
+            readPos += 4;
+            return value;
+        }else
+        {
+            throw new Exception("Could not read value of type 'float'!");
+        }
+    }
+    
+    public double ReadDouble()
+    {
+        
+        if (readableBuffer.Length > readPos)
+        {
+            var value = BitConverter.ToDouble(readableBuffer, readPos);
+            readPos += 8;
+            return value;
+        }else
+        {
+            throw new Exception("Could not read value of type 'double'!");
+        }
+    }
+    
+    public bool ReadBool()
+    {
+        
+        if (readableBuffer.Length > readPos)
+        {
+            var value = BitConverter.ToBoolean(readableBuffer, readPos);
+            readPos += 1;
+            return value;
+        }else
+        {
+            throw new Exception("Could not read value of type 'bool'!");
+        }
+    }
+    
+    public string ReadString(int length)
+    {
+        
+        if (readableBuffer.Length > readPos)
+        {
+            var value = Encoding.ASCII.GetString(readableBuffer, readPos, length);
+            readPos += 1;
+            return value;
+        }else
+        {
+            throw new Exception("Could not read value of type 'string'!");
+        }
     }
 }

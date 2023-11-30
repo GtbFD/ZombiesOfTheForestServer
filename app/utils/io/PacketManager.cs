@@ -9,8 +9,10 @@ public class PacketManager
         this.packets = packets;
     }
 
-    public void Manager(string packetReceived)
+    public void Manager(byte[] packetReceived)
     {
+        /*var reader = new ReadPacket(packetReceived);
+        Console.WriteLine("[@] <- PACKET_RECEIVED - ID: " + reader.ReadInt());*/
         foreach (var packet in packets)
         {
             packet.Handler(packetReceived);

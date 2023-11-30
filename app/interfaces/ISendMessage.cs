@@ -2,5 +2,5 @@
 
 public interface ISendMessage
 {
-    public void Send(IPacket data);
+    public void Send(byte[] data);
 }
