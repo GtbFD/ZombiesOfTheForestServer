@@ -1,11 +1,5 @@
 ﻿using System.Net.Sockets;
-using app.interfaces;
-using app.packets;
 using app.packets.enums;
-using app.packets.request;
-using app.packets.response;
-using app.utils;
-using app.utils.identifier;
 using app.utils.io;
 
 namespace app.handlers;
@@ -20,35 +14,29 @@ public class LoginPlayerHandler : IPacketHandler
         this.connection = connection;
     }
     
-    public void Read(string packetReceived)
+    public void Read(byte[] packetReceived)
     {
-        Console.WriteLine("Pacote inteiro: " + packetReceived);
-        //var reader = new ReadPacket(packetReceived);
-        
-        /*Console.Write(reader.ReadS(1));
-        Console.Write(reader.ReadS(2));*/
-        /*var opcode = PacketIdentifier.Opcode((string) packetReceived);
+        var reader = new ReadPacket(packetReceived);
+
+        var opcode = reader.ReadInt();
         
         if (opcode == (int)OpcodePackets.LOGIN_PLAYER)
         {
-            
-            var loginPlayerPacket = DeserializePacket.Deserialize<LoginPlayerPacket>((string) packetReceived);
-            Write(packetReceived);
-        }*/
+            Console.WriteLine("[LOGIN] <- PACKET_RECEIVED - ID: " + opcode);
+            Write();
+        }
     }
 
-    public void Write(string packetReceived)
+    public void Write()
     {
-        /*var loginResponse = new LoginResponsePacket()
-        {
-            opcode = OpcodePackets.LOGIN_PLAYER_RESPONSE_SUCCESS,
-            code = 0
-        };
+        var writer = new WritePacket();
+        writer.Write((int)OpcodePackets.LOGIN_PLAYER_RESPONSE_SUCCESS);
+        var packet = writer.BuildPacket();
 
-        new IndividualPacket(connection).Send(loginResponse);*/
+        new IndividualPacket(connection).Send(packet);
     }
 
-    public void Handler(string packetReceived)
+    public void Handler(byte[] packetReceived)
     {
         Read(packetReceived);
     }

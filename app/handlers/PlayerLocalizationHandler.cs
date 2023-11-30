@@ -1,8 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics;
+using System.Net.Sockets;
 using app.packets.enums;
-using app.packets.request;
-using app.packets.response;
-using app.utils.identifier;
 using app.utils.io;
 
 namespace app.handlers;
@@ -16,35 +14,35 @@ public class PlayerLocalizationHandler : IPacketHandler
         this.connection = connection;
     }
 
-    public void Handler(string packetReceived)
+    public void Handler(byte[] packetReceived)
     {
+        
         Read(packetReceived);
     }
 
-    public void Read(string packetReceived)
+    public void Read(byte[] packetReceived)
     {
-        
-        var opcode = PacketIdentifier.Opcode(packetReceived);
+        var reader = new ReadPacket(packetReceived);
+        var opcode = reader.ReadInt();
 
-        if (opcode.Equals( (int)OpcodePackets.PLAYER_LOCALIZATION))
+        if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
         {
-            Write(packetReceived);
+            //Console.WriteLine("[LOCALIZATION] <- PACKET_RECEIVED - ID: " + opcode);
+            Thread.Sleep(25);
+            var writer = new WritePacket();
+            writer.Write((int) OpcodePackets.PLAYER_LOCALIZATION_RESPONSE);
+            writer.Write(reader.ReadFloat());
+            writer.Write(reader.ReadFloat());
+            writer.Write(reader.ReadFloat());
+
+            var playerLocalizationPacket = writer.BuildPacket();
+        
+            connection.Send(playerLocalizationPacket);
         }
     }
 
-    public void Write(string packetReceived)
+    public void Write()
     {
-        var playerLocalization = DeserializePacket.Deserialize<PlayerLocalizationPacket>(packetReceived);
-
-        var playerLocalizationResponsePacket = new PlayerLocalizationResponsePacket()
-        {
-            opcode = (int)OpcodePackets.PLAYER_LOCALIZATION_RESPONSE,
-            x = playerLocalization.x,
-            y = playerLocalization.y,
-            z = playerLocalization.z
-        };
-
-        new BroadcastingPacket(connection, PlayerList.GetInstance().GetList())
-            .Send(playerLocalizationResponsePacket);
+        
     }
 }

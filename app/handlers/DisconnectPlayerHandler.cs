@@ -1,12 +1,6 @@
 using System.Net.Sockets;
-using app.interfaces;
-using app.packets;
 using app.packets.enums;
-using app.packets.request;
-using app.packets.response;
-using app.utils.identifier;
 using app.utils.io;
-
 namespace app.handlers;
 
 class DisconnectPlayerHandler : IPacketHandler
@@ -18,36 +12,34 @@ class DisconnectPlayerHandler : IPacketHandler
         this.playerConnection = playerConnection;
     }
 
-    public void Handler(string packetReceived)
+    public void Handler(byte[] packetReceived)
     {
 
         Read(packetReceived);
     }
 
-    public void Read(string packetReceived)
+    public void Read(byte[] packetReceived)
     {
-        var opcode = PacketIdentifier.Opcode((string) packetReceived);
-        
+        var reader = new ReadPacket(packetReceived);
+        var opcode = reader.ReadInt();
+
         if (opcode == (int)OpcodePackets.DISCONNECT_PLAYER)
         {
-            
+            Console.WriteLine("[DISCONNECT] <- PACKET_RECEIVED - ID: " + opcode);
             Console.WriteLine("Player {0} disconnected", playerConnection.RemoteEndPoint);
             DisconnectPlayer(playerConnection);
+            Write();
         }
     }
     
 
-    public void Write(string packetReceived)
-    { 
-        PrintSendedMessage();
-
-        var disconnectPlayer = new DisconnectPlayerResponsePacket()
-        {
-            opcode = (int)OpcodePackets.DISCONNECT_PLAYER_RESPONSE
-        };
-
-        new IndividualPacket(playerConnection).Send(disconnectPlayer);
-        DisconnectPlayer(playerConnection);
+    public void Write()
+    {
+        var writer = new WritePacket();
+        writer.Write((int) OpcodePackets.DISCONNECT_PLAYER_RESPONSE);
+        var packet = writer.BuildPacket();
+        
+        new IndividualPacket(playerConnection).Send(packet);
     }
 
     public void PrintSendedMessage()
