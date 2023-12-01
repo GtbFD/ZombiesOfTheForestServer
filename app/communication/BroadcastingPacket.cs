@@ -27,4 +27,15 @@ public class BroadcastingPacket : ISendMessage
             }
         }
     }
+    
+    public void SendAll(byte[] data)
+    {
+        foreach (var player in connectedPlayers.ToList())
+        {
+            if (player.connection.Connected)
+            {
+                player.connection.Send(data);
+            }
+        }
+    }
 }
