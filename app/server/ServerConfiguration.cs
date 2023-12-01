@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 using app.models;
 
 namespace app.server;
@@ -10,21 +11,61 @@ class ServerConfiguration
 
     public void Start()
     {
-        Console.WriteLine("Started server");
-        Config();
+        Console.WriteLine("[STATUS]: STARTED");
+        
+        ConfigUDP();
+        ConfigTCP();
+        
     }
     
-    private void Config()
+    private void ConfigTCP()
     {
-        var ipAdressFamily = new ServerInfo().AddressFamily();
-        var endPoint = new EndPointServer().Config();
+        Console.WriteLine("[TCP]: OK");
+        
+        var serverInfo = new ServerInfo();
+        
+        var ipAdressFamily = serverInfo.AddressFamily(serverInfo.GetHost());
+        var endPoint = new EndPointServer().Config(serverInfo.GetHost(), serverInfo.GetPortTCP());
 
         var connection = new Socket(ipAdressFamily, SocketType.Stream, ProtocolType.Tcp);
 
         connection.Bind(endPoint);
         connection.Listen(maxConnections);
-        
+
         WaitToConnections(connection);
+    }
+
+    private void ConfigUDP()
+    {
+        Console.WriteLine("[UDP]: OK");
+        
+        var serverInfo = new ServerInfo();
+
+        var ipAddressFamily = serverInfo.AddressFamily(serverInfo.GetHost());
+        var endPoint = new EndPointServer().Config(serverInfo.GetHost(), serverInfo.GetPortUDP());
+        
+        var connectionUDP = new Socket(ipAddressFamily, SocketType.Dgram, ProtocolType.Udp);
+        connectionUDP.Bind(endPoint);
+
+        WaitToConnectionsUDP(connectionUDP);
+    }
+
+    private void WaitToConnectionsUDP(Socket connectionUDP)
+    {
+        var serverInfo = new ServerInfo();
+        var udpConnection = new UdpClient(serverInfo.GetPortUDP());
+
+        var remoteEp = (EndPoint) new EndPointServer().Config(serverInfo.GetHost(), serverInfo.GetPortUDP());
+        var data = new byte[1024];
+        Task.Run(() =>
+        {
+            while (true)
+            {
+                var res = connectionUDP.ReceiveFrom(data, ref remoteEp);
+                
+                Console.WriteLine("UDP Message: " + res.ToString());
+            }
+        });
     }
 
     private void WaitToConnections(Socket listenerSocket)
