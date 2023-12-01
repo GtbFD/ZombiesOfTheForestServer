@@ -7,6 +7,7 @@ public class ServerInfo
 {
     private string host;
     private int port;
+    private int portUDP;
     private Socket connection;
     private byte[] buffer;
 
@@ -14,7 +15,8 @@ public class ServerInfo
     {
         host = "localhost";
         port = 11000;
-        buffer = new byte[8192];
+        portUDP = 11001;
+        buffer = new byte[4 * 1024];
     }
 
     public string GetHost()
@@ -22,9 +24,14 @@ public class ServerInfo
         return host;
     }
 
-    public int GetPort()
+    public int GetPortTCP()
     {
         return port;
+    }
+    
+    public int GetPortUDP()
+    {
+        return portUDP;
     }
 
     public byte[] GetBuffer()
@@ -37,13 +44,13 @@ public class ServerInfo
         return connection.RemoteEndPoint.ToString();
     }
 
-    public IPAddress IPAdress()
+    public IPAddress IPAdress(string host)
     {
-        return Dns.GetHostEntry(GetHost()).AddressList[0];
+        return Dns.GetHostEntry(host).AddressList[0];
     }
 
-    public AddressFamily AddressFamily()
+    public AddressFamily AddressFamily(string host)
     {
-        return IPAdress().AddressFamily;
+        return IPAdress(host).AddressFamily;
     }
 }
