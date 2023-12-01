@@ -40,12 +40,16 @@ class DisconnectPlayerHandler : IPacketHandler
         var packet = writer.BuildPacket();
         
         new IndividualPacket(playerConnection).Send(packet);
-    }
+        
+        var writerUpdateConnections = new WritePacket();
+        writerUpdateConnections.Write((int) OpcodePackets.UPDATE_CONNECTIONS_RESPONSE);
+        writerUpdateConnections.Write(PlayerList.GetInstance().GetList().Count);
 
-    public void PrintSendedMessage()
-    {
-        Console.WriteLine("-> Authorization to disconnect");
+        var packetUpdateConnections = writerUpdateConnections.BuildPacket();
+        new BroadcastingPacket(null, 
+            PlayerList.GetInstance().GetList()).SendAll(packetUpdateConnections);
     }
+    
 
     private void DisconnectPlayer(Socket connection)
     {

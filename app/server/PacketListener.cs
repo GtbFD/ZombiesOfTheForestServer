@@ -35,7 +35,7 @@ class PacketListener
                     {
                         new LoginPlayerHandler(playerConnection.Result),
                         new DisconnectPlayerHandler(playerConnection.Result),
-                        new PlayerLocalizationHandler(playerConnection.Result)
+                        //new PlayerLocalizationHandler(playerConnection.Result)
                     };
 
                     var packetManager = new PacketManager(packets);

@@ -28,7 +28,7 @@ public class PlayerLocalizationHandler : IPacketHandler
         if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
         {
             //Console.WriteLine("[LOCALIZATION] <- PACKET_RECEIVED - ID: " + opcode);
-            Thread.Sleep(25);
+            Thread.Sleep(40);
             var writer = new WritePacket();
             writer.Write((int) OpcodePackets.PLAYER_LOCALIZATION_RESPONSE);
             writer.Write(reader.ReadFloat());
