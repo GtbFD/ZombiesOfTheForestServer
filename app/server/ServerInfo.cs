@@ -3,30 +3,53 @@ using System.Net.Sockets;
 
 namespace app.server;
 
-public class ServerInfo
+public sealed class ServerInfo
 {
-    private string host;
-    private int port;
+    private string hostTCP;
+    private string hostUDP;
+    
+    private int portTCP;
     private int portUDP;
+    
     private Socket connection;
     private byte[] buffer;
 
+    private static ServerInfo instance;
+
     public ServerInfo()
     {
-        host = "localhost";
-        port = 11000;
+        hostTCP = "127.0.0.1";
+        hostUDP = "127.0.0.1";
+        
+        portTCP = 11000;
         portUDP = 11001;
-        buffer = new byte[4 * 1024];
+        
+        buffer = new byte[2 * 1024];
     }
 
-    public string GetHost()
+    public static ServerInfo ServerInfoInstance()
     {
-        return host;
+        if (instance == null)
+        {
+            instance = new ServerInfo();
+        }
+
+        return instance;
+    }
+
+    public string GetHostTCP()
+    {
+        return hostTCP;
     }
 
     public int GetPortTCP()
     {
-        return port;
+        return portTCP;
+    }
+    
+    public string GetHostUDP()
+    {
+        return hostUDP;
     }
     
     public int GetPortUDP()
