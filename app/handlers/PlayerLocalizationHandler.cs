@@ -8,10 +8,16 @@ namespace app.handlers;
 public class PlayerLocalizationHandler : IPacketHandler
 {
     private Socket connection;
+    private UdpClient udpConnection;
 
     public PlayerLocalizationHandler(Socket connection)
     {
         this.connection = connection;
+    }
+    
+    public PlayerLocalizationHandler(UdpClient udpConnection)
+    {
+        this.udpConnection = udpConnection;
     }
 
     public void Handler(byte[] packetReceived)
@@ -22,10 +28,13 @@ public class PlayerLocalizationHandler : IPacketHandler
 
     public void Read(byte[] packetReceived)
     {
+
         var reader = new ReadPacket(packetReceived);
         var opcode = reader.ReadInt();
-
-        if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
+        
+        Console.WriteLine($"[UDP][PACKET] <- {opcode}");
+        
+        /*if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
         {
             //Console.WriteLine("[LOCALIZATION] <- PACKET_RECEIVED - ID: " + opcode);
             Thread.Sleep(40);
@@ -38,7 +47,7 @@ public class PlayerLocalizationHandler : IPacketHandler
             var playerLocalizationPacket = writer.BuildPacket();
         
             connection.Send(playerLocalizationPacket);
-        }
+        }*/
     }
 
     public void Write()
