@@ -22,32 +22,18 @@ public class PlayerLocalizationHandler : IPacketHandler
 
     public void Handler(byte[] packetReceived)
     {
-        
         Read(packetReceived);
     }
 
     public void Read(byte[] packetReceived)
     {
-
         var reader = new ReadPacket(packetReceived);
         var opcode = reader.ReadInt();
-        
-        Console.WriteLine($"[UDP][PACKET] <- {opcode}");
-        
-        /*if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
-        {
-            //Console.WriteLine("[LOCALIZATION] <- PACKET_RECEIVED - ID: " + opcode);
-            Thread.Sleep(40);
-            var writer = new WritePacket();
-            writer.Write((int) OpcodePackets.PLAYER_LOCALIZATION_RESPONSE);
-            writer.Write(reader.ReadFloat());
-            writer.Write(reader.ReadFloat());
-            writer.Write(reader.ReadFloat());
 
-            var playerLocalizationPacket = writer.BuildPacket();
-        
-            connection.Send(playerLocalizationPacket);
-        }*/
+        if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
+        {
+            Console.WriteLine($"x {reader.ReadFloat()}, y {reader.ReadFloat()}, y {reader.ReadFloat()}");
+        }
     }
 
     public void Write()
