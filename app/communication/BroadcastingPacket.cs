@@ -21,9 +21,9 @@ public class BroadcastingPacket : ISendMessage
     {
         foreach (var player in connectedPlayers.ToList())
         {
-            if (player.connection.Connected && !player.connection.RemoteEndPoint.Equals(connection))
+            if (player.tcpConnection.Connected && !player.tcpConnection.RemoteEndPoint.Equals(connection))
             {
-                player.connection.Send(data);
+                player.tcpConnection.Send(data);
             }
         }
     }
@@ -32,9 +32,9 @@ public class BroadcastingPacket : ISendMessage
     {
         foreach (var player in connectedPlayers.ToList())
         {
-            if (player.connection.Connected)
+            if (player.tcpConnection.Connected)
             {
-                player.connection.Send(data);
+                player.tcpConnection.Send(data);
             }
         }
     }
