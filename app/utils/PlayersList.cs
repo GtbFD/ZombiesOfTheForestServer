@@ -7,17 +7,17 @@ public sealed class PlayerList
 {
     private static List<Player> connectedPlayers;
     
-    private static PlayerList _playerList;
+    private static PlayerList playerList;
 
     public static PlayerList GetInstance()
     {
-        if (_playerList == null)
+        if (playerList == null)
         {
-            _playerList = new PlayerList();
+            playerList = new PlayerList();
             connectedPlayers = new List<Player>();
         }
 
-        return _playerList;
+        return playerList;
     }
 
     public List<Player> GetList()
@@ -34,7 +34,7 @@ public sealed class PlayerList
     {
         foreach(var player in connectedPlayers.ToList())
         {
-            if (player.connection.RemoteEndPoint
+            if (player.tcpConnection.RemoteEndPoint
                 .Equals(connection.RemoteEndPoint))
             {
                 connectedPlayers.Remove(player);
@@ -47,5 +47,8 @@ public sealed class PlayerList
         connectedPlayers.Add(player);
     }
 
-
+    public void AddUdpConnection(UdpClient udpClient)
+    {
+        
+    }
 }

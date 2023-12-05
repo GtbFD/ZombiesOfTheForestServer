@@ -4,6 +4,9 @@ namespace app.models;
 
 public class Player
 {
-    public Socket connection { get; set; }
+    public int id { get; set; }
+    public Socket tcpConnection { get; set; }
+    
+    public UdpClient udpConnection { get; set; }
     public Localization localization { get; set; }
 }

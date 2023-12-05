@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.Sockets;
 using app.packets.enums;
+using app.server;
 using app.utils.io;
 
 namespace app.handlers;
@@ -32,7 +33,16 @@ public class PlayerLocalizationHandler : IPacketHandler
 
         if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
         {
-            Console.WriteLine($"x {reader.ReadFloat()}, y {reader.ReadFloat()}, y {reader.ReadFloat()}");
+            var packetWriter = new WritePacket();
+            packetWriter.Write((int) OpcodePackets.PLAYER_LOCALIZATION_RESPONSE);
+            packetWriter.Write(reader.ReadFloat());
+            packetWriter.Write(reader.ReadFloat());
+            packetWriter.Write(reader.ReadFloat());
+            var packet = packetWriter.BuildPacket();
+            
+            udpConnection.Send(packet, packet.Length, ServerInfo.ServerInfoInstance().GetHostUDP(), 
+                ServerInfo.ServerInfoInstance().GetPortUDP());
+
         }
     }
 

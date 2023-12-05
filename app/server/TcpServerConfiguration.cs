@@ -33,14 +33,15 @@ class TcpServerConfiguration
         {
             var acceptedConnection = listenerSocket.Accept();
 
-            var player = new Player()
+            /*var player = new Player()
             {
-                connection = acceptedConnection,
+                tcpConnection = acceptedConnection,
+                udpConnection = null,
                 localization = null
             };
-
-            PlayerList.GetInstance().AddPlayer(player);
-            Console.WriteLine("- {0} player(s) connected", PlayerList.GetInstance().GetList().Count);
+            
+            PlayerList.GetInstance().AddPlayer(player);*/
+            //Console.WriteLine("- {0} player(s) connected", PlayerList.GetInstance().GetList().Count);
             ListenToPackets(acceptedConnection);
         }
     }
