@@ -1,19 +1,19 @@
-﻿using System.Net;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 using app.handlers;
+using app.interfaces;
 using app.utils.io;
-using static app.server.ServerInfo;
+
 
 namespace app.server;
 
-class PacketListenerTcp
+class PacketListenerTcp : IPacketListener
 {
     private Socket playerConnection;
-
-    public void SetConnectionTCP(Socket playerConnection)
+    
+    public void SetConnection(Socket connection)
     {
-        this.playerConnection = playerConnection;
+        playerConnection = connection;
     }
 
     public void ListenToPackets()

@@ -2,19 +2,26 @@
 using System.Net.Sockets;
 using static app.server.ServerInfo;
 using app.handlers;
+using app.interfaces;
 using app.utils.io;
 
 namespace app.server;
 
-public class PacketListenerUdp
+public class PacketListenerUdp : IPacketListener
 {
-    private IPEndPoint endPoint;
-    private UdpClient playerConnectionUdp;
-
-    public void SetConnectionUDP(UdpClient connectionUDP, IPEndPoint endPoint)
+    private IPEndPoint ipEndPoint;
+    private UdpClient connection;
+    
+    public void SetConnection(Socket connection)
     {
-        playerConnectionUdp = connectionUDP;
-        this.endPoint = endPoint;
+        var udpClient = new UdpClient();
+        udpClient.Client = connection;
+        this.connection = udpClient;
+    }
+
+    public void SetIpEndPoint(IPEndPoint ipEndPoint)
+    {
+        this.ipEndPoint = ipEndPoint;
     }
 
     public void ListenToPackets()
@@ -22,12 +29,12 @@ public class PacketListenerUdp
         while (true)
         {
             
-            var packetUdpBytes = playerConnectionUdp.Receive(ref endPoint);
+            var packetUdpBytes = connection.Receive(ref ipEndPoint);
 
 
             var packets = new List<IPacketHandler>
             {
-                new PlayerLocalizationHandler(playerConnectionUdp),
+                new PlayerLocalizationHandler(connection),
             };
 
             var packetManager = new PacketManager(packets);

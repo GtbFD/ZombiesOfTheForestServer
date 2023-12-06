@@ -33,15 +33,22 @@ public class PlayerLocalizationHandler : IPacketHandler
 
         if (opcode == (int)OpcodePackets.PLAYER_LOCALIZATION)
         {
+
+            var x = reader.ReadFloat();
+            var y = reader.ReadFloat();
+            var z = reader.ReadFloat();
+            
+            Console.WriteLine($"x {x}, y {y}, z {z}");
+            
             var packetWriter = new WritePacket();
             packetWriter.Write((int) OpcodePackets.PLAYER_LOCALIZATION_RESPONSE);
-            packetWriter.Write(reader.ReadFloat());
-            packetWriter.Write(reader.ReadFloat());
-            packetWriter.Write(reader.ReadFloat());
+            packetWriter.Write(x);
+            packetWriter.Write(y);
+            packetWriter.Write(z);
             var packet = packetWriter.BuildPacket();
             
-            udpConnection.Send(packet, packet.Length, ServerInfo.ServerInfoInstance().GetHostUDP(), 
-                ServerInfo.ServerInfoInstance().GetPortUDP());
+            /*udpConnection.Send(packet, packet.Length, udpConnection.Client.RemoteEndPoint.ToString(), 
+                ServerInfo.ServerInfoInstance().GetPortUDP());*/
 
         }
     }

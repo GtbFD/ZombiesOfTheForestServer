@@ -27,7 +27,7 @@ public sealed class ServerInfo
         buffer = new byte[2 * 1024];
     }
 
-    public static ServerInfo ServerInfoInstance()
+    public static ServerInfo GetInstance()
     {
         if (instance == null)
         {
