@@ -6,12 +6,8 @@ class LaunchServer
 {
     public static void Main(String[] args)
     {
-        var tcpServer = new TcpServerConfiguration();
-        tcpServer.Start();
-
-        var udpServer = new UdpServerConfiguration();
-        udpServer.Start();
-        
+        new ServerConnection().Config("tcp");
+        new ServerConnection().Config("udp");
     }
 
 }
